@@ -1,0 +1,36 @@
+# https://grafana.com/docs/loki/latest/installation/docker/
+# wget https://raw.githubusercontent.com/grafana/loki/v2.8.0/clients/cmd/promtail/promtail-docker-config.yaml -O promtail-config.yaml
+
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+# https://grafana.com/docs/loki/latest/clients/promtail/configuration/#docker_sd_config
+# which logs to read/scrape
+scrape_configs:
+  - job_name: app_scrape
+    # Docker service discovery allows retrieving targets from a Docker daemon.
+    docker_sd_configs:
+      # Address of the Docker daemon.  Use unix:///var/run/docker.sock for a local setup.
+      - host: unix:///var/run/docker.sock
+        # The time after which the containers are refreshed.
+        refresh_interval: 5s
+        # Optional filters to limit the discovery process to a subset of available
+        # resources.
+        # The available filters are listed in the Docker documentation:
+        # Containers: https://docs.docker.com/engine/api/v1.41/#operation/ContainerList
+        filters:
+          - name: name
+            values: [app]
+    relabel_configs:
+      # Available meta labels (can be used during relabeling):
+      # __meta_docker_container_name: the name of the container
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)'
+        target_label: 'container'
