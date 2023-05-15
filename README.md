@@ -17,7 +17,7 @@ The docker-compose creates 4 services:
 
 Start docker-compose services:
 
-```sh
+```
 make local.docker.up.build
 ```
 
@@ -38,7 +38,7 @@ The Go app is running on http://localhost:8000
 
 In the [tests](/app/tests.go) file, there are handlers to trigger several logs levels:
 
-```sh
+```
 curl localhost:8000/tests/debug     // trigger a debug log
 curl localhost:8000/tests/info      // trigger an info log
 curl localhost:8000/tests/warn      // trigger a warning log
